@@ -246,8 +246,9 @@ class ReplyWithHeader {
         let textLines = this.#text.split(/\r?\n/);
         rwhLogger.debug(textLines);
 
+        let uiLocale = messenger.i18n.getUILanguage();
         let locale = await rwhSettings.getHeaderLocale();
-        rwhLogger.debug('locale -', locale);
+        rwhLogger.debug('_processPlainText:: uiLocale:', uiLocale, 'selected pref:', locale);
 
         let startPos = -1;
         let linesToDelete = 1;
@@ -255,8 +256,10 @@ class ReplyWithHeader {
             // Reply insert marker by fallback order
             var lookupValues = new Array(
                 rwhI18n.i18n['wrote'][locale],
+                rwhI18n.i18n['wrote'][uiLocale],
                 rwhI18n.i18n['wrote']['en-US'],
                 rwhI18n.i18n['originalMessage'][locale],
+                rwhI18n.i18n['originalMessage'][uiLocale],
                 rwhI18n.i18n['originalMessage']['en-US'],
             );
             rwhLogger.debug('lookupValues -', lookupValues);

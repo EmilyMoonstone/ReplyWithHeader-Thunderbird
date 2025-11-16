@@ -24,7 +24,7 @@ export const i18n = {
     "pt": "Portuguese - Português",
     "pt-BR": "Portuguese - Brazil",
     "ko": "Korean - 한국어",
-    "nl": "Dutch",
+    "nl": "Netherlands - Dutch",
     "nb": "Norwegian - Norsk Bokmål",
     "ru": "Russian - Pусский",
     "sv": "Swedish - Svenska",
