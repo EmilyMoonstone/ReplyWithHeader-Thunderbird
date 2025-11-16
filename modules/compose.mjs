@@ -24,7 +24,17 @@ const cleanBlockQuoteStyle = 'border:none !important; padding-left:0px !importan
 export async function process(tab) {
     rwhLogger.debug(`tab.id=${tab.id}, tab.type=${tab.type}, tab.mailTab=${tab.mailTab}`);
 
-    let composeDetails = await messenger.compose.getComposeDetails(tab.id);
+    // explicit delay workaround for image lost issue GH#197
+    // maximum 2s
+    let tabId = tab.id;
+    for (let i = 0; i < 10; i++) {
+        if (await hasNoMailnewsUrls(tabId)) {
+            break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 200));
+    }
+
+    let composeDetails = await messenger.compose.getComposeDetails(tabId);
     rwhLogger.debug(composeDetails);
     if (composeDetails.type === 'new') {
         rwhLogger.debug('New message getting composed');
@@ -59,6 +69,19 @@ export async function process(tab) {
     }
 
     await rwh.process(tab);
+}
+
+// This is workaround method to resolve image issue GH#197
+// https://github.com/jeevatkm/ReplyWithHeader-Thunderbird/issues/197#issuecomment-3537253277
+async function hasNoMailnewsUrls(tabId) {
+    // This function could act on the actual DOM by executing a compose script
+    // which might be more reliable, but for simplicity of the example we just
+    // check the body text here.
+    const details = await messenger.compose.getComposeDetails(tabId);
+    return (
+        !details.body.includes("imap://") &&
+        !details.body.includes("mailbox://")
+    )
 }
 
 class ReplyWithHeader {
