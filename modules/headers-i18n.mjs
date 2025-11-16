@@ -209,7 +209,7 @@ export const i18n = {
     "fr": "Message transféré",
     "de": "Weitergeleitete Nachricht",
     "es": "Mensaje reenviado",
-    "it": "Messaggio Inoltrato",
+    "it": "Messaggio inoltrato",
     "ja": "転送メール",
     "pl": "Przekazana wiadomość",
     "ar": "رسالة ممرّرة",
