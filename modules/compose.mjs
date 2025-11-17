@@ -53,7 +53,7 @@ export async function process(tab) {
     let messageId = composeDetails.relatedMessageId;
 
     // Check 10s disable exists on message level
-    let isMessageLevelDisabled = await rwhSettings.get(`disable.${accountId}.message_${messageId}`);
+    let isMessageLevelDisabled = await rwhSettings.get(`disable.message_${messageId}`);
     rwhLogger.debug('isMessageLevelDisabled', isMessageLevelDisabled);
     if (isMessageLevelDisabled) {
         return; // RWH stops here
