@@ -616,14 +616,33 @@ class ReplyWithHeader {
                     break;
                 }
                 let token = subject.slice(cursor, colonPos).trim();
-                if (!allPrefixes.has(token)) {
-                    break;
+
+                if (allPrefixes.has(token)) {
+                    prefixes.push(token);
+                    cursor = colonPos + 1;
+                    if (subject[cursor] === ' ') {
+                        cursor++;
+                    }
+                    continue;
                 }
-                prefixes.push(token);
-                cursor = colonPos + 1;
-                if (subject[cursor] === ' ') {
-                    cursor++;
+
+                // Allow a custom prefix between subject prefixes, e.g. "RE: Topic: RE: ..."
+                let lookaheadCursor = colonPos + 1;
+                if (subject[lookaheadCursor] === ' ') {
+                    lookaheadCursor++;
                 }
+                let nextColonPos = subject.indexOf(':', lookaheadCursor);
+                if (nextColonPos !== -1) {
+                    let nextToken = subject.slice(lookaheadCursor, nextColonPos).trim();
+                    if (allPrefixes.has(nextToken)) {
+                        customPrefix += token + ': ';
+                        cursor = lookaheadCursor;
+                        continue;
+                    }
+                }
+
+                // Not a prefix and no prefix after it: subject starts here.
+                break;
             }
             subjectText = subject.slice(cursor).trim();
         } else {
@@ -710,7 +729,7 @@ class ReplyWithHeader {
         if (prefixes.length === 0) {
             return customPrefix + subjectText;
         }
-        return customPrefix + prefixes.join(': ') + ': ' + subjectText;
+        return prefixes.join(': ') + ': ' + customPrefix + subjectText;
 
     }
 

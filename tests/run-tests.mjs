@@ -138,7 +138,15 @@ async function runAllTests() {
         resetStorage();
         await setSettings({ transSubjectPrefix: true, onlyOnePrefix: false, keepOriginalLanguage: true });
         const rwh = await createRwh();
-        assertEqual(await rwh._cleanSubjectPrefixes('Topic: RE: Test'), 'Topic: RE: Test');
+        assertEqual(await rwh._cleanSubjectPrefixes('Topic: RE: Test'), 'RE: Topic: Test');
+    });
+
+    await test('cleanSubjectPrefixes: custom prefix after leading RE', async () => {
+        resetStorage();
+        await setSettings({ transSubjectPrefix: true, onlyOnePrefix: false, keepOriginalLanguage: true });
+        const rwh = await createRwh();
+        const subject = 'RE: Topic: RE: AW: AW: Fwd: Test 2 ReplyWithHeader';
+        assertEqual(await rwh._cleanSubjectPrefixes(subject), 'RE: FW: Topic: Test 2 ReplyWithHeader');
     });
 
     await test('cleanSubjectPrefixes: reduce by type and standardize', async () => {
